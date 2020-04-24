@@ -201,7 +201,7 @@ function drawScene(ctx, shaderProgramData, deltaT) {
     ctx.viewport(0, 0, ctx.canvas.width, ctx.canvas.height); //Resize viewport
 
     //Clear the canvas
-    ctx.clearColor(0.0, 0.0, 0.0, 1.0); //set clear color to black
+    ctx.clearColor(voidColor[0], voidColor[1], voidColor[2], 1.0); //set clear color to voidColor
     ctx.clearDepth(1.0); //set clear depth to 1.0
     ctx.clear(ctx.COLOR_BUFFER_BIT, ctx.DEPTH_BUFFER_BIT);
 

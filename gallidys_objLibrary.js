@@ -77,6 +77,9 @@ const normalMatrix = mat4.create();
 //Projection matrix
 const projectionMatrix = mat4.create();
 
+//Void color
+var voidColor = [102.0 / 256.0, 204.0 / 256.0, 255.0 / 256.0]; //sky blue
+
 /**
  * Object: keys
  * 
