@@ -123,15 +123,6 @@ function initBuffers(ctx, model) {
     ctx.bufferData(ctx.ARRAY_BUFFER, new Float32Array(models[model].colorValues), ctx.STATIC_DRAW);
 
     //Create pointer to a new buffer
-    var indexBuffer = ctx.createBuffer();
-
-    //Bind buffer to element array buffer
-    ctx.bindBuffer(ctx.ELEMENT_ARRAY_BUFFER, indexBuffer);
-
-    //Pass in the index data
-    ctx.bufferData(ctx.ELEMENT_ARRAY_BUFFER, new Uint16Array(models[model].indexValues), ctx.STATIC_DRAW);
-
-    //Create pointer to a new buffer
     var normalBuffer = ctx.createBuffer();
 
     //Bind the buffer to array buffer
@@ -143,7 +134,6 @@ function initBuffers(ctx, model) {
     return {
 
         vertex: vertexBuffer,
-        index: indexBuffer,
         color: colorBuffer,
         normal: normalBuffer,
     };
@@ -260,11 +250,8 @@ function drawScene(ctx, shaderProgramData, deltaT) {
         ctx.uniformMatrix4fv(shaderProgramData.uniforms.modelViewMatrix, false, modelViewMatrix);
         ctx.uniformMatrix4fv(shaderProgramData.uniforms.normalMatrix, false, normalMatrix);
 
-        //Tell WebGl to use element array
-        ctx.bindBuffer(ctx.ELEMENT_ARRAY_BUFFER, objects[object].model.buffers.index);
-
         //Draw triangles
-        ctx.drawElements(ctx.TRIANGLES, objects[object].model.indexCount, ctx.UNSIGNED_SHORT, 0);
+        ctx.drawArrays(ctx.TRIANGLES, 0, objects[object].model.vertexCount);
 
         //Update rotation for next draw
         updateObjectRotation(object, deltaT);
