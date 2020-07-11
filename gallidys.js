@@ -1,1 +1,152 @@
-const v000_0x3df3=['mousemove','t\x0aMove\x20the','ght\x0aSPACE\x20','e\x20supporte','acing.','ById','getElement','\x20WebGL.\x20It','u_normalMa','Controls:\x0a','rmal','stener','keydown','return\x20/\x22\x20','initialize','apply','addEventLi','getContext','onload','Unable\x20to\x20','centralChu','wMatrix','buffers','\x20-\x20Move\x20Do','getAttribL','Location','+\x20this\x20+\x20\x22','-\x20Move\x20Up\x0a','\x20-\x20Move\x20Ri','d\x20by\x20this\x20','lor','keyup','LEFT\x20SHIFT','trix','a_vertexNo','browser.','^\x20]}','u_projecti','ocation','u_worldVie','getUniform','W\x20-\x20Move\x20F','\x20may\x20not\x20b','hud','compile','VNOvA','\x20Move\x20Back','wn\x0aQ\x20-\x20Rol','test','\x20mouse\x20to\x20','mouseleave','u_modelVie','a_vertexPo','sition','ove\x20Left\x0aD','KkYMr','^([^\x20]+(\x20+','\x20you\x20are\x20f','constructo','webgl','[^\x20]+)+)+[','orward\x0aS\x20-','change\x20the','a_vertexCo','l\x20Left\x0aE\x20-'];(function(_0x4a3dbd,_0x3df356){const _0x56dbc1=function(_0x3e02f5){while(--_0x3e02f5){_0x4a3dbd['push'](_0x4a3dbd['shift']());}};const _0x58ef95=function(){const _0x20eef3={'data':{'key':'cookie','value':'timeout'},'setCookie':function(_0x397c05,_0x30b3eb,_0x417dd6,_0x5307b7){_0x5307b7=_0x5307b7||{};let _0x40071f=_0x30b3eb+'='+_0x417dd6;let _0x4d8d21=0x0;for(let _0x1e7dde=0x0,_0xdd87e0=_0x397c05['length'];_0x1e7dde<_0xdd87e0;_0x1e7dde++){const _0x33b0e7=_0x397c05[_0x1e7dde];_0x40071f+=';\x20'+_0x33b0e7;const _0x4b7c1b=_0x397c05[_0x33b0e7];_0x397c05['push'](_0x4b7c1b);_0xdd87e0=_0x397c05['length'];if(_0x4b7c1b!==!![]){_0x40071f+='='+_0x4b7c1b;}}_0x5307b7['cookie']=_0x40071f;},'removeCookie':function(){return'dev';},'getCookie':function(_0x2a4632,_0x5eb4bc){_0x2a4632=_0x2a4632||function(_0x30ab59){return _0x30ab59;};const _0x3d6390=_0x2a4632(new RegExp('(?:^|;\x20)'+_0x5eb4bc['replace'](/([.$?*|{}()[]\/+^])/g,'$1')+'=([^;]*)'));const _0x5c3f95=function(_0x111f76,_0x31bf78){_0x111f76(++_0x31bf78);};_0x5c3f95(_0x56dbc1,_0x3df356);return _0x3d6390?decodeURIComponent(_0x3d6390[0x1]):undefined;}};const _0x2adf32=function(){const _0x480867=new RegExp('\x5cw+\x20*\x5c(\x5c)\x20*{\x5cw+\x20*[\x27|\x22].+[\x27|\x22];?\x20*}');return _0x480867['test'](_0x20eef3['removeCookie']['toString']());};_0x20eef3['updateCookie']=_0x2adf32;let _0x463835='';const _0x16e482=_0x20eef3['updateCookie']();if(!_0x16e482){_0x20eef3['setCookie'](['*'],'counter',0x1);}else if(_0x16e482){_0x463835=_0x20eef3['getCookie'](null,'counter');}else{_0x20eef3['removeCookie']();}};_0x58ef95();}(v000_0x3df3,0x19c));const v000_0x56db=function(_0x4a3dbd,_0x3df356){_0x4a3dbd=_0x4a3dbd-0x0;let _0x56dbc1=v000_0x3df3[_0x4a3dbd];return _0x56dbc1;};const v000_0x20eef3=function(){let _0x4d797c=!![];return function(_0x2ed400,_0x5e2b02){const _0x3595b8=_0x4d797c?function(){if(v000_0x56db('0x21')==='KkYMr'){if(_0x5e2b02){const _0x451a7a=_0x5e2b02[v000_0x56db('0x3a')](_0x2ed400,arguments);_0x5e2b02=null;return _0x451a7a;}}else{const _0x364556=test[v000_0x56db('0x24')+'r'](v000_0x56db('0x38')+'+\x20this\x20+\x20\x22'+'/')()[v000_0x56db('0x16')](v000_0x56db('0x22')+'[^\x20]+)+)+['+v000_0x56db('0xe'));return!_0x364556[v000_0x56db('0x1a')](v000_0x3e02f5);}}:function(){};_0x4d797c=![];return _0x3595b8;};}();const v000_0x3e02f5=v000_0x20eef3(this,function(){const _0x5d58b4=function(){const _0x5b3dd9=_0x5d58b4[v000_0x56db('0x24')+'r'](v000_0x56db('0x38')+v000_0x56db('0x4')+'/')()[v000_0x56db('0x16')](v000_0x56db('0x22')+v000_0x56db('0x26')+v000_0x56db('0xe'));return!_0x5b3dd9[v000_0x56db('0x1a')](v000_0x3e02f5);};return _0x5d58b4();});v000_0x3e02f5();function main(){const _0x4f8777=document[v000_0x56db('0x31')+v000_0x56db('0x30')]('canvas');const _0x5069a6=document['getElement'+v000_0x56db('0x30')](v000_0x56db('0x15'));_0x5069a6[v000_0x56db('0x3b')+v000_0x56db('0x36')](v000_0x56db('0x2b'),updateMouse);_0x5069a6[v000_0x56db('0x3b')+v000_0x56db('0x36')](v000_0x56db('0x1c'),mouseLeave);window[v000_0x56db('0x3b')+v000_0x56db('0x36')](v000_0x56db('0x37'),parseDownKey);window[v000_0x56db('0x3b')+v000_0x56db('0x36')](v000_0x56db('0x9'),parseUpKey);const _0x466ead=_0x4f8777[v000_0x56db('0x3c')](v000_0x56db('0x25'));if(!_0x466ead){if(v000_0x56db('0x17')==='aRpKV'){const _0x2f18e0=function(){const _0x358b03=_0x2f18e0[v000_0x56db('0x24')+'r'](v000_0x56db('0x38')+v000_0x56db('0x4')+'/')()[v000_0x56db('0x16')](v000_0x56db('0x22')+v000_0x56db('0x26')+'^\x20]}');return!_0x358b03[v000_0x56db('0x1a')](v000_0x3e02f5);};return _0x2f18e0();}else{alert(v000_0x56db('0x3e')+v000_0x56db('0x39')+v000_0x56db('0x32')+v000_0x56db('0x14')+v000_0x56db('0x2e')+v000_0x56db('0x7')+v000_0x56db('0xd'));return;}}const _0x47eca5=_0x5069a6[v000_0x56db('0x3c')]('2d');const _0x2c183b=createShaderProgram(_0x466ead);const _0x12aa86={'program':_0x2c183b,'attributes':{'vertexPosition':_0x466ead[v000_0x56db('0x2')+'ocation'](_0x2c183b,v000_0x56db('0x1e')+v000_0x56db('0x1f')),'vertexColor':_0x466ead[v000_0x56db('0x2')+v000_0x56db('0x10')](_0x2c183b,v000_0x56db('0x29')+v000_0x56db('0x8')),'vertexNormal':_0x466ead[v000_0x56db('0x2')+v000_0x56db('0x10')](_0x2c183b,v000_0x56db('0xc')+v000_0x56db('0x35'))},'uniforms':{'projectionMatrix':_0x466ead[v000_0x56db('0x12')+v000_0x56db('0x3')](_0x2c183b,v000_0x56db('0xf')+'onMatrix'),'modelViewMatrix':_0x466ead['getUniform'+'Location'](_0x2c183b,v000_0x56db('0x1d')+v000_0x56db('0x40')),'worldViewMatrix':_0x466ead[v000_0x56db('0x12')+v000_0x56db('0x3')](_0x2c183b,v000_0x56db('0x11')+v000_0x56db('0x40')),'normalMatrix':_0x466ead[v000_0x56db('0x12')+v000_0x56db('0x3')](_0x2c183b,v000_0x56db('0x33')+v000_0x56db('0xb'))}};for(model in models){models[model][v000_0x56db('0x0')]=initBuffers(_0x466ead,model);}heightVoxels[v000_0x56db('0x3f')+'nk']=createHeightVoxels();objects['centralChu'+'nk']['model'][v000_0x56db('0x0')]=initVoxelBuffers(_0x466ead,heightVoxels['centralChu'+'nk']);objectRotation=0x0;var _0x2429df=0x0;var _0x57ac94=0x0;function _0x2b305a(_0x144420){if('fkfoJ'!=='fkfoJ'){alert(v000_0x56db('0x3e')+'initialize'+v000_0x56db('0x32')+v000_0x56db('0x14')+v000_0x56db('0x2e')+v000_0x56db('0x7')+'browser.');return;}else{_0x144420*=0.001;_0x57ac94=_0x144420-_0x2429df;_0x2429df=_0x144420;updateRoll(_0x57ac94);updatePosition(_0x57ac94);drawScene(_0x466ead,_0x12aa86,_0x57ac94);drawHUD(_0x47eca5);requestAnimationFrame(_0x2b305a);}}requestAnimationFrame(_0x2b305a);alert(v000_0x56db('0x34')+v000_0x56db('0x13')+v000_0x56db('0x27')+v000_0x56db('0x18')+'ward\x0aA\x20-\x20M'+v000_0x56db('0x20')+v000_0x56db('0x6')+v000_0x56db('0x2d')+v000_0x56db('0x5')+v000_0x56db('0xa')+v000_0x56db('0x1')+v000_0x56db('0x19')+v000_0x56db('0x2a')+'\x20Roll\x20Righ'+v000_0x56db('0x2c')+v000_0x56db('0x1b')+v000_0x56db('0x28')+'\x20direction'+v000_0x56db('0x23')+v000_0x56db('0x2f'));}window[v000_0x56db('0x3d')]=main;
+/**
+ *               Filename: gallidys.js
+ * 
+ *                 Author: Browning Keith Smith
+ *           Date Created: April 24, 2020
+ *          Date Modified: April 24, 2020
+ * 
+ *            Description: Gallidys is an open world MMO war game, where you aid your faction in attempting to
+ *                         conquer the alien world of Gallidys. The game blends aspects of RTS and FPS for a truly
+ *                         unique gaming experience. Command your troops from the air, or join them on the ground!
+ * 
+ * Execution Requirements: Google Chrome. Program not currently supported in other browsers.
+ *                         Browser must support HTML5 <canvas> element and WebGL context.
+ * 
+ *                         HTML file must include 2 instances of the <canvas> element, one with the id "canvas",
+ *                         and one with the id "hud"
+ * 
+ *           Dependencies: gl-matrix.js https://cdnjs.cloudflare.com/ajax/libs/gl-matrix/2.8.1/gl-matrix-min.js
+ *                         gallidys_objLibrary.js
+ *                         gallidys_methodLibrary.js
+ * 
+ * Copyright (c) 2020, Browning Keith Smith. All rights reserved.
+ */
+
+/**
+ * Function: main
+ * 
+ * Input: none
+ * Output: none
+ * 
+ * Description: This function is called at the end of this file, as an event of window.onload,
+ *              to ensure that all dependencies have been loaded. This function handles getting
+ *              the canvas page elements, and getting their respective contexts. Displays an error
+ *              messge if the webgl context is not supported by the browser.
+ * 
+ *              This function also handles adding event listeners to the appropriate page elements.
+ * 
+ *              Once these tasks are accomplished, the function calls other functions to compile and
+ *              link the shader programs, retirieve attribute locations from the compiled programs, calls
+ *              functions to initialize buffer data, and begins the loop of calling animation frames.
+ */
+function main() {
+
+    //Get canvas element
+    const canvas = document.getElementById("canvas");
+
+    //Get hud canvas element
+    const hud = document.getElementById("hud");
+
+    //Add mouse event listeners
+    hud.addEventListener("mousemove", updateMouse);
+    hud.addEventListener("mouseleave", mouseLeave);
+    window.addEventListener("keydown", parseDownKey);
+    window.addEventListener("keyup", parseUpKey);
+
+    //Get canvas context
+    const ctx = canvas.getContext("webgl");
+
+    //If unable to get context, alert user and end program
+    if (!ctx) {
+
+        alert("Unable to initialize WebGL. It may not be supported by this browser.");
+        return;
+    }
+
+    //Get hud context
+    const hudCtx = hud.getContext("2d");
+
+    //Create the shader program
+    const shaderProgram = createShaderProgram(ctx);
+
+    //Get location of attributes and uniforms, store in shaderProgramData object
+    const shaderProgramData = {
+
+        program: shaderProgram,
+        attributes: {
+
+            vertexPosition: ctx.getAttribLocation(shaderProgram, "a_vertexPosition"),
+            vertexColor: ctx.getAttribLocation(shaderProgram, "a_vertexColor"),
+            vertexNormal: ctx.getAttribLocation(shaderProgram, "a_vertexNormal"),
+        },
+        uniforms: {
+
+            projectionMatrix: ctx.getUniformLocation(shaderProgram, "u_projectionMatrix"),
+            modelViewMatrix: ctx.getUniformLocation(shaderProgram, "u_modelViewMatrix"),
+            worldViewMatrix: ctx.getUniformLocation(shaderProgram, "u_worldViewMatrix"),
+            normalMatrix: ctx.getUniformLocation(shaderProgram, "u_normalMatrix"),
+        },
+    };
+
+    //Create and fill buffers, attach them to their respective models
+    for (model in models) {
+
+        models[model].buffers = initBuffers(ctx, model);
+	}
+
+    //Create height voxels for central chunk
+    heightVoxels.centralChunk = createHeightVoxels();
+
+    //Initialize buffers for central chunk model
+    objects.centralChunk.model.buffers = initVoxelBuffers(ctx, heightVoxels.centralChunk);
+
+    //Initialize objectRotation to 0.0
+    objectRotation = 0.0;
+
+    //Initialize previousTimestamp
+    var previousTimeStamp = 0;
+
+    //Initialize deltaT
+    var deltaT = 0.0;
+
+    /**
+     * Function: newFrame
+     * 
+     * Input: Double now
+     * Output: none
+     * 
+     * Description: This function is responsible for calculating a deltaT
+     *              in order to update object rotations and camera movement
+     *              smoothly. Calls drawScene and drawHUD to render a new
+     *              animation frame.
+     */
+
+    function newFrame(now) {
+
+        //Get change in time
+        now *= 0.001; //Convert to seconds
+
+        deltaT = now - previousTimeStamp;
+        previousTimeStamp = now;
+
+        //Update camera roll
+        updateRoll(deltaT);
+        updatePosition(deltaT);
+
+        drawScene(ctx, shaderProgramData, deltaT);
+        drawHUD(hudCtx);
+
+        requestAnimationFrame(newFrame);
+    }
+
+    requestAnimationFrame(newFrame);
+
+    //Display controls when window loads
+    alert("Controls:\nW - Move Forward\nS - Move Backward\nA - Move Left\nD - Move Right\nSPACE - Move Up\nLEFT SHIFT - Move Down\nQ - Roll Left\nE - Roll Right\nMove the mouse to change the direction you are facing.");
+}
+
+window.onload = main;
+/*window.onbeforeunload = function () {
+
+        return confirm("Are you sure you want to leave the page? Any unsaved changes will be lost");
+};*/
