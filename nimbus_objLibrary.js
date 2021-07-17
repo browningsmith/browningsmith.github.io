@@ -321,25 +321,6 @@ let objects = [
      *             Double scale,
      *             model model
      */
-
-    {
-    
-        x: 0.0,
-        y: 6.0,
-        z: -6.0,
-
-        roll: 0.0,
-        pitch: 0.0,
-        yaw: 0.0,
-
-        rollSpeed: 3.0,
-        pitchSpeed: 5.0,
-        yawSpeed: 9.0,
-
-        scale: 1.0,
-
-        model: models.cube,
-    },
 ];
 
 /**
