@@ -37,16 +37,13 @@
  *              link the shader programs, retrieve attribute locations from the compiled programs, calls
  *              functions to initialize buffer data, and begins the loop of calling animation frames.
  */
-
-const piOver2 = Math.PI / 2.0;
-
 function main() {
 
     //Get canvas element
-    const canvas = document.getElementById("canvas");
+    canvas = document.getElementById("canvas");
 
     //Get hud canvas element
-    const hud = document.getElementById("hud");
+    hud = document.getElementById("hud");
 
     //Add mouse event listeners
     hud.addEventListener("mousemove", updateMouse);
@@ -55,7 +52,7 @@ function main() {
     window.addEventListener("keyup", parseUpKey);
 
     //Get canvas context
-    const ctx = canvas.getContext("webgl");
+    ctx = canvas.getContext("webgl");
 
     //If unable to get context, alert user and end program
     if (!ctx) {
@@ -65,44 +62,47 @@ function main() {
     }
 
     //Get hud context
-    const hudCtx = hud.getContext("2d");
+    hudCtx = hud.getContext("2d");
 
-    //Create the shader program
-    const shaderProgram = createShaderProgram(ctx);
+    //Create the shader programs
+    createShaderProgram(skyBoxShader);
+    createShaderProgram(shipInteriorShader);
+    createShaderProgram(shipExteriorShader);
 
-    //Get location of attributes and uniforms, store in shaderProgramData object
-    const shaderProgramData = {
+    //Load textures
+    for (textureData in textures)
+    {
+        loadTexture(textures[textureData]);
+    }
 
-        program: shaderProgram,
-        attributes: {
+    // Attach skybox textures to the respective models
+    skyBoxModels.negZplane.texture = textures.negZplane.texture;
+    skyBoxModels.posXplane.texture = textures.posXplane.texture;
+    skyBoxModels.posZplane.texture = textures.posZplane.texture;
+    skyBoxModels.negXplane.texture = textures.negXplane.texture;
+    skyBoxModels.posYplane.texture = textures.posYplane.texture;
+    skyBoxModels.negYplane.texture = textures.negYplane.texture;
 
-            vertexPosition: ctx.getAttribLocation(shaderProgram, "a_vertexPosition"),
-            vertexColor: ctx.getAttribLocation(shaderProgram, "a_vertexColor"),
-            vertexNormal: ctx.getAttribLocation(shaderProgram, "a_vertexNormal"),
-        },
-        uniforms: {
-
-            projectionMatrix: ctx.getUniformLocation(shaderProgram, "u_projectionMatrix"),
-            modelViewMatrix: ctx.getUniformLocation(shaderProgram, "u_modelViewMatrix"),
-            worldViewMatrix: ctx.getUniformLocation(shaderProgram, "u_worldViewMatrix"),
-            normalMatrix: ctx.getUniformLocation(shaderProgram, "u_normalMatrix"),
-        },
-    };
+    //Create and fill buffers for skybox panels
+    for (model in skyBoxModels)
+    {
+        initSkyBoxBuffers(skyBoxModels[model]);
+    }
 
     //Create and fill buffers, attach them to their respective models
     for (model in models) {
 
-        models[model].buffers = initBuffers(ctx, model);
+        initBuffers(models[model]);
 	}
 
     // Create more cubes in random places
-    for (let i=0; i<1000; i++)
+    for (let i=0; i<2000; i++)
     {
         let newCube = {
 
-            x: Math.random() * 200.0 - 100.0,
-            y: Math.random() * 200.0 - 100.0,
-            z: Math.random() * 200.0 - 100.0,
+            x: Math.random() * chunkSize * 2.0 - chunkSize,
+            y: Math.random() * chunkSize * 2.0 - chunkSize,
+            z: Math.random() * chunkSize * 2.0 - chunkSize,
 
             roll: 0.0,
             pitch: 0.0,
@@ -114,14 +114,18 @@ function main() {
 
             scale: 1.0,
 
-            model: models.cube,
+            model: models.cube
         };
 
-        objects.push(newCube);
+        exteriorObjects.push(newCube);
     }
 
+    // Set current boarded ship and whether player is piloting
+    player.boardedShip = ship;
+    player.isPiloting = true;
+
     // Randomize rotation speeds of each object
-    randomizeRotations(objects);
+    randomizeRotations(exteriorObjects);
 
     //Initialize previousTimestamp
     let previousTimeStamp = 0;
@@ -150,19 +154,25 @@ function main() {
         previousTimeStamp = now;
 
         // Update object rotations
-        for (object in objects)
+        for (object in exteriorObjects)
         {
+            shiftToNextChunk(exteriorObjects[object]);
             updateObjectRotation(object, deltaT);
         }
 
-        //Update camera position
-        updatePosition(deltaT, ctx);
+        //Update ship position
+        updateShipSpeedAndPosition(ship, deltaT);
 
-        drawScene(ctx, shaderProgramData);
-        drawHUD(hudCtx);
+        //Update player position
+        updatePlayerPosition(deltaT);
+
+        drawScene();
+        drawHUD();
 
         requestAnimationFrame(newFrame);
     }
+
+    alert("Movement Controls:\n\nMove cursor to look around cockpit\nE - Increase ship speed\nQ - Decrease ship speed\nA - Turn ship left\nD - Turn ship right\nW - Pitch ship down\nS - Pitch ship up");
 
     requestAnimationFrame(newFrame);
 }
