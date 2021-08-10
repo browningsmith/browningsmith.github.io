@@ -292,8 +292,6 @@ function drawHUD() {
 function drawScene() {
 
     let ship = player.boardedShip;
-
-    
     
     ctx.canvas.width = ctx.canvas.clientWidth;   //Resize canvas to fit CSS styling
     ctx.canvas.height = ctx.canvas.clientHeight;
@@ -714,6 +712,30 @@ function parseUpKey(event) {
  */
 function performKeyActions() {
 
+    // Update toggle status of F
+    if (keys.F.toggleSequence == 0)
+    {
+        if (keys.F.down)
+        {
+            keys.F.toggleSequence = 1;
+        }
+    }
+    else if (keys.F.toggleSequence == 1)
+    {
+        if (!keys.F.down)
+        {
+            // Initiate toggle trigger
+            console.log("F key pressed once");
+            togglePiloting();
+
+            keys.F.toggleSequence = 0;
+        }
+    }
+    else
+    {
+        keys.F.toggleSequence = 0;
+    }
+    
     // If the player is piloting a ship, do ship movement
     if (player.isPiloting) {
 
@@ -722,6 +744,46 @@ function performKeyActions() {
     else
     {
         updatePlayerSpeed();
+    }
+}
+
+/**
+ * Function: togglePiloting
+ * 
+ * Input: None
+ * Output: None
+ * 
+ * Description: This function switches controls from player to ship
+ * and vice versa. Snaps player view forward when toggled on.
+ */
+function togglePiloting()
+{
+    // If the player is piloting, turn piloting off
+    if (player.isPiloting)
+    {
+        player.isPiloting = false;
+
+        // Disable input to controls
+        player.boardedShip.isPressingAccelerate = false;
+        player.boardedShip.forwardAccel = 0.0;
+        player.boardedShip.isPressingYaw = false;
+        player.boardedShip.yawAccel = 0.0;
+        player.boardedShip.isPressingPitch = false;
+        player.boardedShip.pitchAccel = 0.0;
+        
+    }
+    else
+    {
+        player.isPiloting = true;
+
+        // Disable current player movement
+        player.rightSpeed = 0.0;
+        player.upSpeed = 0.0;
+        player.forwardSpeed = 0.0;
+
+        // Snap player view forward
+        player.yawAngle = 0.0;
+        player.pitchAngle = 0.0;
     }
 }
 
@@ -744,7 +806,7 @@ function updateShipAccel() {
 
         player.boardedShip.forwardAccel = 0.0;
 
-        console.log("Ship acceleration set to " + player.boardedShip.isPressingAccelerate);
+        //console.log("Ship acceleration set to " + player.boardedShip.isPressingAccelerate);
     }
     else {
 
@@ -773,7 +835,9 @@ function updateShipAccel() {
         //Set that yaw accelerate button is not pressed
         player.boardedShip.isPressingYaw = false;
 
-        console.log("Ship yaw set to " + player.boardedShip.isPressingYaw);
+        player.boardedShip.yawAccel = 0.0;
+
+        //console.log("Ship yaw set to " + player.boardedShip.isPressingYaw);
     }
     else {
 
@@ -804,7 +868,7 @@ function updateShipAccel() {
 
         player.boardedShip.pitchAccel = 0.0;
 
-        console.log("Ship pitch set to " + player.boardedShip.isPressingPitch);
+        //console.log("Ship pitch set to " + player.boardedShip.isPressingPitch);
     }
     else {
 
@@ -827,7 +891,7 @@ function updateShipAccel() {
         }
     }
 
-    console.log("Ship pitch set to " + player.boardedShip.isPressingPitch);
+    //console.log("Ship pitch set to " + player.boardedShip.isPressingPitch);
 }
 
 /**
@@ -1055,7 +1119,7 @@ function updateShipSpeedAndPosition(ship, deltaT)
 
     // console.log("Ship speed: " + ship.forwardSpeed);
 
-    // Reset ship rightVec, upVec and forwardVec
+    // Reset ship rightVec, upVec and forwardVec before pitch and yaw are applied
     vec3.set(ship.rightVec, 1.0, 0.0, 0.0);
     vec3.set(ship.upVec, 0.0, 1.0, 0.0);
     vec3.set(ship.forwardVec, 0.0, 0.0, -1.0);
@@ -1069,6 +1133,8 @@ function updateShipSpeedAndPosition(ship, deltaT)
     // Update ship position based on speed
     moveShipForward(ship, ship.forwardSpeed * deltaT);
 }
+
+
 
 /**
  * Function: moveShipForward
@@ -1195,6 +1261,24 @@ function moveForward(amount) {
 
     player.x += player.forwardVec[0] * amount;
     player.z += player.forwardVec[2] * amount;
+
+    if (player.z < -0.8)
+    {
+        player.z = -0.8;
+    }
+    if (player.z > 0.8)
+    {
+        player.z = 0.8;
+    }
+
+    if (player.x < -4.8)
+    {
+        player.x = -4.8;
+    }
+    if (player.x > 4.8)
+    {
+        player.x = 4.8;
+    }
 }
 
 /**
@@ -1210,6 +1294,24 @@ function moveRight(amount) {
 
     player.x += player.rightVec[0] * amount;
     player.z += player.rightVec[2] * amount;
+
+    if (player.z < -0.8)
+    {
+        player.z = -0.8;
+    }
+    if (player.z > 0.8)
+    {
+        player.z = 0.8;
+    }
+
+    if (player.x < -4.8)
+    {
+        player.x = -4.8;
+    }
+    if (player.x > 4.8)
+    {
+        player.x = 4.8;
+    }
 }
 
 /**
@@ -1226,10 +1328,14 @@ function moveUp(amount) {
 
     player.y += amount;
 
-    /*if (player.y < 0.0)
+    if (player.y < 0.0)
     {
         player.y = 0.0;
-    }*/
+    }
+    if (player.y > 0.0)
+    {
+        player.y = 0.0;
+    }
 }
 
 /**

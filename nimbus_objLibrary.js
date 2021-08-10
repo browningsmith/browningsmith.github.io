@@ -101,6 +101,11 @@ const keys = {
         code: "KeyE",
         down: false,
     },
+    F: {
+        code: "KeyF",
+        down: false,
+        toggleSequence: 0, // 0 for up, 1 for down, 2 for up again
+    },
     Space: {
 
         code: "Space",
@@ -198,7 +203,7 @@ let player = {
     y: 0.0,
     z: 0.0,
 
-    yawAngle: 0.0, // Angle of rotation around y axis
+    yawAngle: Math.PI, // Angle of rotation around y axis
     pitchAngle: 0.0, // Angle of rotation around x axis
     rollAngle: 0.0, // Angle of rotation around z axis
 

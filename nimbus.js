@@ -120,7 +120,7 @@ function main() {
         exteriorObjects.push(newCube);
     }
 
-    // Set current boarded ship and whether player is piloting
+    // Set current boarded ship
     player.boardedShip = ship;
     player.isPiloting = true;
 
@@ -172,7 +172,7 @@ function main() {
         requestAnimationFrame(newFrame);
     }
 
-    alert("Movement Controls:\n\nMove cursor to look around cockpit\nE - Increase ship speed\nQ - Decrease ship speed\nA - Turn ship left\nD - Turn ship right\nW - Pitch ship down\nS - Pitch ship up");
+    alert("Movement Controls:\n\nMove cursor to look around cockpit\nE - Increase ship speed\nQ - Decrease ship speed\nA - Turn ship left\nD - Turn ship right\nW - Pitch ship down\nS - Pitch ship up\nF - Switch between ship control and player control");
 
     requestAnimationFrame(newFrame);
 }
