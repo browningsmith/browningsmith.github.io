@@ -189,7 +189,7 @@ let shaderData = {
                     break;
                 }
                 
-                den += noise3D(wrapVolumeCoords( ro + rd * t));
+                den += clamp(0.0, 1.0, noise3D(wrapVolumeCoords( ro + rd * t)) + 0.08);
 
                 if (den >= 1.0)
                 {
