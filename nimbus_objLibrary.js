@@ -217,7 +217,7 @@ let player = {
     isPressingAccelerate: false,
     isAutoDecelActive: false,
     forwardAccel: 0.0,
-    forwardSpeed: 0.0,
+    forwardSpeed: 100.0,
 
     isPressingYaw: false,
     yawAccelRate: 30.0 * Math.PI / 180.0,
