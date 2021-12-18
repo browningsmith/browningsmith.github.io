@@ -1,0 +1,48 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+
+    <title>Nimbus</title>
+
+    <style type="text/css">
+
+        * {
+            padding: 0;
+            margin: 0;
+        }
+
+        html, body {
+            width: 100%;
+            height: 100%;
+        }
+
+        canvas {
+            position: absolute;
+            left: 0px;
+            top: 0px;
+            width: 100%;
+            height: 100%;
+            cursor: none;
+        }
+
+        #hud {
+            z-index: 1;
+        }
+    </style>
+
+    <script src="gl-matrix.js"></script>
+    <script src="nimbus_texturesLibrary.js"></script>
+    <script src="nimbus_modelsLibrary.js"></script>
+    <script src="nimbus_objLibrary.js"></script>
+    <script src="nimbus_shaderPrograms.js"></script>
+    <script src="nimbus_methodLibrary.js"></script>
+    <script src="nimbus.js"></script>
+</head>
+
+    <body>
+
+        <canvas id="canvas"></canvas>
+        <canvas id="hud"></canvas>
+    </body>
+</html>
