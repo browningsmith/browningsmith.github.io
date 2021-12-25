@@ -6,15 +6,65 @@ let dimension = Math.pow(2, po2);
 let rowLength = 0.0;
 let animationDuration = dimension * 1.0;
 
+const piOver2 = Math.PI / 2.0;
+
+// 3d vector of zeroes
+const VEC3_ZERO = [0, 0, 0];
+
+// Axis ids used by gl-matrix.js rotation functions
+const XAXIS = [1, 0, 0];
+const YAXIS = [0, 1, 0];
+const ZAXIS = [0, 0, 1];
+
+//Projection matrix
+const projectionMatrix = mat4.create();
+
+//Skybox rotation matrix
+const skyBoxRotationMatrix = mat4.create();
+
+// Player (camera)
+let player = {
+
+    yawAngle: 0.0, // Angle of rotation around y axis
+    pitchAngle: 0.0, // Angle of rotation around x axis
+
+    //Normal vectors representing right, left, and forward for the player's view.
+    //Player is initialized facing negative Z
+    rightVec: vec3.fromValues(1.0, 0.0, 0.0),
+    forwardVec: vec3.fromValues(0.0, 0.0, -1.0),
+};
+
+/**
+ * Object: lastMousePosition
+ * 
+ * Description: contains data on last mouse position relative to the canvas
+ * 
+ * Attributes: Boolean inWindow,
+ *             Double x, y,
+ * 
+ */
+ let lastMousePosition = {
+
+    inWindow: false,
+    x: 0,
+    y: 0,
+};
+
 let shaderData = {
 
     vertexShaderCode: `
     
         attribute vec4 a_vertexPosition;
 
+        uniform mat4 u_projectionMatrix;
+        uniform mat4 u_worldViewMatrix;
+
+        varying highp vec4 v_untransVertexPosition;
+
         void main(void)
         {
-            gl_Position = a_vertexPosition;
+            v_untransVertexPosition = a_vertexPosition;
+            gl_Position = u_projectionMatrix * u_worldViewMatrix * a_vertexPosition;
         }
     `,
 
@@ -24,7 +74,8 @@ let shaderData = {
     
         precision highp float;
     
-        uniform vec2 u_resolution;
+        varying highp vec4 v_untransVertexPosition;
+        
         uniform float u_time;
         uniform float u_duration;
         uniform float u_dimension;
@@ -33,20 +84,12 @@ let shaderData = {
         uniform sampler2D u_sampler;
 
         vec4 vol3D(sampler2D sampler, vec3 coord, float tileDimension, float rowLength)
-        {
-            vec2 tileCoord = floor(vec2(coord.z * tileDimension, 0.0));
-            for (int i = 0; i < 5000; i++)
-            {
-                if (tileCoord.x >= rowLength)
-                {
-                    tileCoord.x -= rowLength;
-                    tileCoord.y += 1.0;
-                }
-                else
-                {
-                    break;
-                }
-            }
+        { 
+            float tileIndex = floor(coord.z * tileDimension) / rowLength;
+            
+            vec2 tileCoord;
+            tileCoord.x = fract(tileIndex) * rowLength;
+            tileCoord.y = floor(tileIndex);
             
             vec2 finalCoord = (tileCoord + coord.xy) / rowLength;
 
@@ -155,27 +198,17 @@ let shaderData = {
         
         void main()
         {
-            vec2 pixCoord = gl_FragCoord.xy;
+            // Direction of ray is origin to vertex coordinates
+            vec3 rd = normalize(v_untransVertexPosition.xyz);
 
-            // Calculate field of vision (radians)
-            float fov = 100.0 * PI / 180.0;
-
-            // Calculate distance of origin from screen to get proper fov
-            float dfs = u_resolution.y / (2.0 * tan(fov / 2.0));
-
-            // Calculate direction of ray based on pixel coordinates and dfs
-            vec3 rd = normalize(
-                vec3(
-                    pixCoord.x - u_resolution.x / 2.0,
-                    pixCoord.y - u_resolution.y / 2.0,
-                    dfs * -1.0
-                )
-            );
+            // This prevents a strange cross artifact forming in the center
+            if ((rd.x > -0.0001) && (rd.x < 0.0001)) {rd.x = 0.0;}
+            if ((rd.y > -0.0001) && (rd.y < 0.0001)) {rd.y = 0.0;}
 
             // Move ray origin through negative z space
             vec3 ro = vec3(0.0, 0.0, (u_time / u_duration) * -1.0);
 
-            float t = 0.100;
+            float t = 0.200;
             float step = 0.010;
             float den = 0.0;
 
@@ -202,11 +235,19 @@ let shaderData = {
             den *= (1.0 - (t / 2.0)) * 1.0;
             den = clamp(0.0, 1.0, den);
 
-            vec3 color1 = vec3(1.0, 1.0, 1.0);
-            vec3 color2 = vec3(50.0 / 256.0, 50.0 / 256.0, 50.0 / 256.0);
+            vec3 color1 = vec3(1.0, 0.5, 1.0);
+            vec3 color2 = vec3(0.2, 0.0, 0.2);
 
 
-            gl_FragColor = vec4(mix(color1, color2, den), 1.0);
+            gl_FragColor = vec4(mix(color1, color2, den), 1.0); // Goo rendering
+
+            // Color volume rendering
+            /*gl_FragColor = vol3D(
+                u_sampler,
+                wrapVolumeCoords( ro + rd * t),
+                u_dimension,
+                u_rowLength
+            );*/
         }
     `,
 
@@ -223,7 +264,8 @@ let shaderData = {
         };
         this.uniforms = {
 
-            resolution: ctx.getUniformLocation(this.program, "u_resolution"),
+            projectionMatrix: ctx.getUniformLocation(this.program, "u_projectionMatrix"),
+            worldViewMatrix: ctx.getUniformLocation(this.program, "u_worldViewMatrix"),
             time: ctx.getUniformLocation(this.program, "u_time"),
             sampler: ctx.getUniformLocation(this.program, "u_sampler"),
             dimension: ctx.getUniformLocation(this.program, "u_dimension"),
@@ -234,24 +276,121 @@ let shaderData = {
     },
 };
 
-let planeObject = {
+let skyBoxModels = {
+    nzPlane: {
 
-    vertexCoordinates: [
+        vertexCoordinates: [
 
-        -1.0, -1.0, 0.0,
-        1.0, -1.0, 0.0,
-        1.0, 1.0, 0.0,
-        -1.0, 1.0, 0.0,
-    ],
+            -1.0, -1.0, -1.0,
+            1.0, -1.0, -1.0,
+            1.0, 1.0, -1.0,
+            -1.0, 1.0, -1.0,
+        ],
 
-    elementIndices: [
+        elementIndices: [
 
-        0, 2, 3,
-        0, 1, 2,
-    ],
+            0, 2, 3,
+            0, 1, 2,
+        ],
 
-    elementCount: 6,
-};
+        elementCount: 6,
+    },
+
+    pxPlane: {
+
+        vertexCoordinates: [
+
+            1.0, -1.0, -1.0,
+            1.0, -1.0, 1.0,
+            1.0, 1.0, 1.0,
+            1.0, 1.0, -1.0,
+        ],
+
+        elementIndices: [
+
+            0, 2, 3,
+            0, 1, 2,
+        ],
+
+        elementCount: 6,
+    },
+
+    pzPlane: {
+
+        vertexCoordinates: [
+
+            1.0, -1.0, 1.0,
+            -1.0, -1.0, 1.0,
+            -1.0, 1.0, 1.0,
+            1.0, 1.0, 1.0,
+        ],
+
+        elementIndices: [
+
+            0, 2, 3,
+            0, 1, 2,
+        ],
+
+        elementCount: 6,
+    },
+
+    nxPlane: {
+
+        vertexCoordinates: [
+
+            -1.0, -1.0, 1.0,
+            -1.0, -1.0, -1.0,
+            -1.0, 1.0, -1.0,
+            -1.0, 1.0, 1.0,
+        ],
+
+        elementIndices: [
+
+            0, 2, 3,
+            0, 1, 2,
+        ],
+
+        elementCount: 6,
+    },
+
+    pyPlane: {
+
+        vertexCoordinates: [
+
+            -1.0, 1.0, -1.0,
+            1.0, 1.0, -1.0,
+            1.0, 1.0, 1.0,
+            -1.0, 1.0, 1.0,
+        ],
+
+        elementIndices: [
+
+            0, 2, 3,
+            0, 1, 2,
+        ],
+
+        elementCount: 6,
+    },
+
+    nyPlane: {
+
+        vertexCoordinates: [
+
+            -1.0, -1.0, 1.0,
+            1.0, -1.0, 1.0,
+            1.0, -1.0, -1.0,
+            -1.0, -1.0, -1.0,
+        ],
+
+        elementIndices: [
+
+            0, 2, 3,
+            0, 1, 2,
+        ],
+
+        elementCount: 6,
+    },
+}
 
 function main()
 {
@@ -270,7 +409,11 @@ function main()
 
     createShaderProgram(shaderData);
 
-    loadModel(planeObject);
+    // Load skybox panels
+    for (panel in skyBoxModels)
+    {
+        loadModel(skyBoxModels[panel]);
+    }
 
     // Compute rowLength and textureDimension
     if (po2 % 2 == 0)
@@ -368,6 +511,10 @@ function main()
     }*/
     
     let texture = loadArrayToTexture(textureDimension, textureDimension, textureData);
+
+    //Add mouse event listeners
+    canvas.addEventListener("mousemove", updateMouse);
+    canvas.addEventListener("mouseleave", mouseLeave);
 
     // Animation loop
     function newFrame(currentTime)
@@ -539,20 +686,35 @@ function renderFrame(currentTime, texture)
     ctx.viewport(0, 0, ctx.canvas.width, ctx.canvas.height); //Resize viewport
 
     //Clear the canvas
-    ctx.clearColor(0.0, 0.0, 0.0, 1.0); //set clear color to black
+    ctx.clearColor(1.0, 1.0, 1.0, 1.0); //set clear color to white
     ctx.clearDepth(1.0); //set clear depth to 1.0
     ctx.clear(ctx.COLOR_BUFFER_BIT, ctx.DEPTH_BUFFER_BIT);
 
+    //Enable backface culling
+    ctx.enable(ctx.CULL_FACE);
+    ctx.cullFace(ctx.BACK);
+
     //Tell WebGL to use the shader program
     ctx.useProgram(shaderData.program);
+
+    //Compute projection matrix based on new window size
+    mat4.perspective(projectionMatrix, 45 * Math.PI / 180, ctx.canvas.width / ctx.canvas.height, 0.1, 1000.0);
+
+    //Set projection uniform
+    ctx.uniformMatrix4fv(shaderData.uniforms.projectionMatrix, false, projectionMatrix);
+
+    // Compute skyBoxRotationMatrix
+    mat4.identity(skyBoxRotationMatrix);
+    mat4.rotate(skyBoxRotationMatrix, skyBoxRotationMatrix, player.pitchAngle * -1.0, XAXIS); // Second transform, rotate the whole world around x axis (in the opposite direction the player is facing)
+    mat4.rotate(skyBoxRotationMatrix, skyBoxRotationMatrix, player.yawAngle * -1.0, YAXIS); // First transform, rotate the whole world around y axis (in the opposite direction the player is facing)
+
+    // Set world view uniform
+    ctx.uniformMatrix4fv(shaderData.uniforms.worldViewMatrix, false, skyBoxRotationMatrix);
 
     //Instruct WebGL on which texture to use
     ctx.activeTexture(ctx.TEXTURE0);
     ctx.bindTexture(ctx.TEXTURE_2D, texture);
     ctx.uniform1i(shaderData.uniforms.sampler, 0);
-
-    // Set resolution uniform
-    ctx.uniform2f(shaderData.uniforms.resolution, ctx.canvas.width, ctx.canvas.height);
 
     // Set time uniform
     ctx.uniform1f(shaderData.uniforms.time, currentTime);
@@ -566,16 +728,120 @@ function renderFrame(currentTime, texture)
     // Set tile layout dimension
     ctx.uniform1f(shaderData.uniforms.rowLength, rowLength);
 
-    //Instruct WebGL how to pull out vertices
-    ctx.bindBuffer(ctx.ARRAY_BUFFER, planeObject.buffers.vertex);
-    ctx.vertexAttribPointer(shaderData.attributes.vertexPosition, 3, ctx.FLOAT, false, 0, 0); //Pull out 3 values at a time, no offsets
-    ctx.enableVertexAttribArray(shaderData.attributes.vertexPosition); //Enable the pointer to the buffer
+    // For each panel of the skybox
+    for (panel in skyBoxModels)
+    {
+        //Instruct WebGL how to pull out vertices
+        ctx.bindBuffer(ctx.ARRAY_BUFFER, skyBoxModels[panel].buffers.vertex);
+        ctx.vertexAttribPointer(shaderData.attributes.vertexPosition, 3, ctx.FLOAT, false, 0, 0); //Pull out 3 values at a time, no offsets
+        ctx.enableVertexAttribArray(shaderData.attributes.vertexPosition); //Enable the pointer to the buffer
 
-    //Give WebGL the element array
-    ctx.bindBuffer(ctx.ELEMENT_ARRAY_BUFFER, planeObject.buffers.elementIndices);
+        //Give WebGL the element array
+        ctx.bindBuffer(ctx.ELEMENT_ARRAY_BUFFER, skyBoxModels[panel].buffers.elementIndices);
 
-    //Draw triangles
-    ctx.drawElements(ctx.TRIANGLES, planeObject.elementCount, ctx.UNSIGNED_SHORT, 0);
+        //Draw triangles
+        ctx.drawElements(ctx.TRIANGLES, skyBoxModels[panel].elementCount, ctx.UNSIGNED_SHORT, 0);
+    }
+}
+
+/**
+ * Function: updateMouse
+ * 
+ * Input: KeyboardEvent event
+ * Output: None
+ * 
+ * Description: Updates lastMousePosition, and uses the change in mouse position to
+ *              update the direction that the player is facing by calling pithcUp
+ *              and yawRight
+ */
+ function updateMouse(event) {
+
+    //If the mouse is not in the window, record coordinates, set that it is in window, and return
+    if (!lastMousePosition.inWindow) {
+     
+        lastMousePosition.x = event.offsetX; //record x
+        lastMousePosition.y = event.offsetY; //record y
+        lastMousePosition.inWindow = true; //Set that mouse is in window
+
+        return;
+	}
+
+    //Record change in x and y
+    let deltaX = event.offsetX - lastMousePosition.x;
+    let deltaY = event.offsetY - lastMousePosition.y;
+
+    //Update mouse position
+    lastMousePosition.x = event.offsetX;
+    lastMousePosition.y = event.offsetY;
+
+    //console.log("deltaX: " + deltaX + " deltaY: " + deltaY);
+
+    //Yaw and pitch based on change in x and y
+    pitchUp(deltaY * -0.01);
+    yawRight(deltaX * -0.01);
+}
+
+/**
+ * Function: mouseLeave
+ * 
+ * Input: KeyboardEvent event
+ * Output: None
+ * 
+ * Description: Sets lastMousePosition to false. This function should be called
+ *              in the event the mouse leaves the window.
+ */
+function mouseLeave(event) {
+
+    lastMousePosition.inWindow = false;
+}
+
+/**
+ * Function: pitchUp
+ * 
+ * Input: Double angle
+ * Output: None
+ * 
+ * Description: Pitches the player's view around it's local x vector by the given angle
+ */
+//Function to pitch the player's view around it's local x vector
+function pitchUp(angle) {
+
+    // Update player's view pitchAngle
+    player.pitchAngle += angle;
+
+    if (player.pitchAngle > piOver2)
+    {
+        player.pitchAngle = piOver2;
+    }
+
+    if (player.pitchAngle < piOver2 * -1.0)
+    {
+        player.pitchAngle = piOver2 * -1.0;
+    }
+}
+
+/**
+ * Function: yawRight
+ * 
+ * Input: Double angle
+ * Output: None
+ * 
+ * Description: Rotates the player around it's local y vector by the given angle
+ */
+//Function to yaw the player around it's local y vector
+function yawRight(angle) {
+
+    // Update player yawAngle
+    player.yawAngle += angle
+    
+    // Reset player rightVec and forwardVec
+    vec3.set(player.rightVec, 1.0, 0.0, 0.0);
+    vec3.set(player.forwardVec, 0.0, 0.0, -1.0);
+
+    // Rotate rightVec and forwardVec based on new yawAngle
+    vec3.rotateY(player.rightVec, player.rightVec, VEC3_ZERO, player.yawAngle);
+    vec3.rotateY(player.forwardVec, player.forwardVec, VEC3_ZERO, player.yawAngle);
+    
 }
 
 window.onload = main;
