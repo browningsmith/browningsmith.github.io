@@ -1,0 +1,153 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+
+    <title>Clouds: Volumetrics painted to a sky box</title>
+
+    <style type="text/css">
+
+        * {
+
+            padding: 0px;
+            margin: 0px;
+        }
+
+        canvas {
+
+            width: 100%;
+            height: 100%;
+        }
+
+        html, body {
+            width: 100%;
+            height: 100%;
+        }
+
+        #hud {
+            z-index: 1;
+        }
+    </style>
+
+    <script src="gl-matrix.js"></script>
+    <script src="clouds.js"></script>
+</head>
+
+    <body>
+
+        <canvas id="canvas" width="500" height="500"></canvas>
+
+        <br>
+        <label for="tminInput">tmin (0.0, inf):</label>
+        <input type="number" id="tminInput" value="0.2" min="0.0" step="0.001">
+        <label for="densityFalloffInput">density falloff start (0.0, inf):</label>
+        <input type="number" id="densityFalloffInput" value="0.23" min="0.0" step="0.001">
+        <label for="tmaxInput">tmax (0.0, inf):</label>
+        <input type="number" id="tmaxInput" value="0.3" min="0.0" step="0.001">
+        <label for="stepSizeInput">step size (0.0, inf):</label>
+        <input type="number" id="stepSizeInput" value="0.001" min="0.0" step="0.001">
+        <br>
+        <label for="skyColorInput">Sky Color:</label>
+        <input type="color" id="skyColorInput" value="#ffffff">
+        <label for="darkColorInput">Dark Cloud Color:</label>
+        <input type="color" id="darkColorInput" value="#454545">
+        <label for="lightColorInput">Light Cloud Color:</label>
+        <input type="color" id="lightColorInput" value="#ffffff">
+        <br>
+        <label for="sunXInput">Sun Direction (X) (-1.0, 1.0):</label>
+        <input type="number" id="sunXInput" value="0.0" min="-1.0" max="1.0" step="0.01">
+        <label for="sunYInput">Sun Direction (Y) (-1.0, 1.0):</label>
+        <input type="number" id="sunYInput" value="-1.0" min="-1.0" max="1.0" step="0.01">
+        <label for="sunZInput">Sun Direction (Z) (-1.0, 1.0):</label>
+        <input type="number" id="sunZInput" value="0.0" min="-1.0" max="1.0" step="0.01">
+        <br>
+        <label for="tsunMaxInput">max distance to march toward sun (0.0, inf):</label>
+        <input type="number" id="tsunMaxInput" value="0.015" min="0.0" step="0.001">
+        <label for="sunStepSizeInput">step size toward sun (0.0, inf)</label>
+        <input type="number" id="sunStepSizeInput" value="0.005" min="0.0" step="0.001">
+        <br>
+        <label for="lightAbsorptionInput">Light Absorption (Beer's Law) (0.0, inf):</label>
+        <input type="number" id="lightAbsorptionInput" value="6.0" min="0.0" step="0.05">
+        <br>
+        <label for="fogInput">Fog Level (0.0, inf):</label>
+        <input type="number" id="fogInput" value="0.0" min="0.0" step="0.01">
+        <br>
+
+        <button id="resetNoiseInput">Reset Noise</button>
+        <br>
+        <label for="noise1ScaleInput">Noise1 scale (-inf, inf):</label>
+        <input type="number" id="noise1ScaleInput" value="1.0" step="0.01">
+        <label for="noise1XInput">Noise1 translation (x) (-inf, inf):</label>
+        <input type="number" id="noise1XInput" value="0.0" step="0.001">
+        <label for="noise1YInput">Noise1 translation (y) (-inf, inf):</label>
+        <input type="number" id="noise1YInput" value="0.0" step="0.001">
+        <label for="noise1ZInput">Noise1 translation (z) (-inf, inf):</label>
+        <input type="number" id="noise1ZInput" value="0.0" step="0.001">
+        <br>
+        <label for="noise1SlopeInput">Noise1 slope (-inf, inf):</label>
+        <input type="number" id="noise1SlopeInput" value="1.0" step="0.01">
+        <label for="noise1OffsetInput">Noise1 offset (-inf, inf):</label>
+        <input type="number" id="noise1OffsetInput" value="0.0" step="0.01">
+        <br>
+
+        <label for="noise2ScaleInput">Noise2 scale (-inf, inf):</label>
+        <input type="number" id="noise2ScaleInput" value="2.0" step="0.01">
+        <label for="noise2XInput">Noise2 translation (x) (-inf, inf):</label>
+        <input type="number" id="noise2XInput" value="0.15" step="0.001">
+        <label for="noise2YInput">Noise2 translation (y) (-inf, inf):</label>
+        <input type="number" id="noise2YInput" value="0.15" step="0.001">
+        <label for="noise2ZInput">Noise2 translation (z) (-inf, inf):</label>
+        <input type="number" id="noise2ZInput" value="0.15" step="0.001">
+        <br>
+        <label for="noise2SlopeInput">Noise2 slope (-inf, inf):</label>
+        <input type="number" id="noise2SlopeInput" value="0.5" step="0.01">
+        <label for="noise2OffsetInput">Noise2 offset (-inf, inf):</label>
+        <input type="number" id="noise2OffsetInput" value="0.0" step="0.01">
+        <br>
+
+        <label for="noise3ScaleInput">Noise3 scale (-inf, inf):</label>
+        <input type="number" id="noise3ScaleInput" value="4.0" step="0.01">
+        <label for="noise3XInput">Noise3 translation (x) (-inf, inf):</label>
+        <input type="number" id="noise3XInput" value="0.3" step="0.001">
+        <label for="noise3YInput">Noise3 translation (y) (-inf, inf):</label>
+        <input type="number" id="noise3YInput" value="0.3" step="0.001">
+        <label for="noise3ZInput">Noise3 translation (z) (-inf, inf):</label>
+        <input type="number" id="noise3ZInput" value="0.3" step="0.001">
+        <br>
+        <label for="noise3SlopeInput">Noise3 slope (-inf, inf):</label>
+        <input type="number" id="noise3SlopeInput" value="0.25" step="0.01">
+        <label for="noise3OffsetInput">Noise3 offset (-inf, inf):</label>
+        <input type="number" id="noise3OffsetInput" value="0.0" step="0.01">
+        <br>
+
+        <label for="noise4ScaleInput">Noise4 scale (-inf, inf):</label>
+        <input type="number" id="noise4ScaleInput" value="8.0" step="0.01">
+        <label for="noise4XInput">Noise4 translation (x) (-inf, inf):</label>
+        <input type="number" id="noise4XInput" value="0.45" step="0.001">
+        <label for="noise4YInput">Noise4 translation (y) (-inf, inf):</label>
+        <input type="number" id="noise4YInput" value="0.45" step="0.001">
+        <label for="noise4ZInput">Noise4 translation (z) (-inf, inf):</label>
+        <input type="number" id="noise4ZInput" value="0.45" step="0.001">
+        <br>
+        <label for="noise4SlopeInput">Noise4 slope (-inf, inf):</label>
+        <input type="number" id="noise4SlopeInput" value="0.125" step="0.01">
+        <label for="noise4OffsetInput">Noise4 offset (-inf, inf):</label>
+        <input type="number" id="noise4OffsetInput" value="0.0" step="0.01">
+        <br>
+
+        <label for="noise5ScaleInput">Noise5 scale (-inf, inf):</label>
+        <input type="number" id="noise5ScaleInput" value="16.0" step="0.01">
+        <label for="noise5XInput">Noise5 translation (x) (-inf, inf):</label>
+        <input type="number" id="noise5XInput" value="0.6" step="0.001">
+        <label for="noise5YInput">Noise5 translation (y) (-inf, inf):</label>
+        <input type="number" id="noise5YInput" value="0.6" step="0.001">
+        <label for="noise5ZInput">Noise5 translation (z) (-inf, inf):</label>
+        <input type="number" id="noise5ZInput" value="0.6" step="0.001">
+        <br>
+        <label for="noise5SlopeInput">Noise5 slope (-inf, inf):</label>
+        <input type="number" id="noise5SlopeInput" value="0.0625" step="0.01">
+        <label for="noise5OffsetInput">Noise5 offset (-inf, inf):</label>
+        <input type="number" id="noise5OffsetInput" value="0.0" step="0.01">
+        <br>
+    </body>
+</html>
