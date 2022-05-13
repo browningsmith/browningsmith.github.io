@@ -444,19 +444,22 @@ let cloudShader = {
             float density;
 
             // Sample layer 1
-            density = sampleDensity(stu, u_noise1InputSettings.w, u_noise1InputSettings.xyz, u_noise1OutputSettings.x, u_noise1OutputSettings.y);
+            density = sampleDensity(stu, 1.0, vec3(0.0), 1.0, 0.0);
 
             // Sample layer 2
-            density += sampleDensity(stu, u_noise2InputSettings.w, u_noise2InputSettings.xyz, u_noise2OutputSettings.x, u_noise2OutputSettings.y);
+            density += sampleDensity(stu, 2.0, vec3(0.15), 0.5, 0.0);
 
             // Sample layer 3
-            density += sampleDensity(stu, u_noise3InputSettings.w, u_noise3InputSettings.xyz, u_noise3OutputSettings.x, u_noise3OutputSettings.y);
+            density += sampleDensity(stu, 4.0, vec3(0.3), 0.25, 0.0);
 
             // Sample layer 4
-            density += sampleDensity(stu, u_noise4InputSettings.w, u_noise4InputSettings.xyz, u_noise4OutputSettings.x, u_noise4OutputSettings.y);
+            density += sampleDensity(stu, 8.0, vec3(0.45), 0.125, 0.0);
 
             // Sample layer 5
-            density += sampleDensity(stu, u_noise5InputSettings.w, u_noise5InputSettings.xyz, u_noise5OutputSettings.x, u_noise5OutputSettings.y);
+            density += sampleDensity(stu, 16.0, vec3(0.6), 0.0625, 0.0);
+
+            // Sample layer 6
+            density += sampleDensity(stu, 32.0, vec3(0.22), 0.03125, 0.0);
 
             return clamp(density, 0.0, 1.0);
         }
@@ -499,7 +502,7 @@ let cloudShader = {
                     float tsun = 0.0;
                     float densityToSun = density;
 
-                    for (int j=0; j<50; j++)
+                    for (int j=0; j<5; j++)
                     {
                         vec3 newPos = currentPos + -1.0*sunDir*tsun;
                         sampleDistance = length(newPos);
@@ -623,25 +626,6 @@ let cloudShader = {
         }
         
     },
-};
-
-let frameBufferModel = {
-
-    vertexCoordinates: [
-
-        -1.0, -1.0, 0.0,
-        1.0, -1.0, 0.0,
-        1.0, 1.0, 0.0,
-        -1.0, 1.0, 0.0,
-    ],
-
-    elementIndices: [
-
-        0, 2, 3,
-        0, 1, 2,
-    ],
-
-    elementCount: 6,
 };
 
 let skyBoxModels = {
@@ -975,9 +959,6 @@ function main()
     // Create the framebuffer
     frameBuffer = ctx.createFramebuffer();
 
-    // Load the framebuffer model
-    loadFrameBufferModel();
-
     // Load skybox panels
     for (panel in skyBoxModels)
     {
@@ -1111,43 +1092,6 @@ function main()
     }
 
     return newShader;
-}
-
-/**
- * Function: loadFrameBufferModel
- * 
- * Input: None,
- * Output: None
- * 
- * Description: This function creates buffers for the frameBufferModel vertices and
- *              element indices
- */
-
-function loadFrameBufferModel()
-{
-    //Create pointer to a new buffer
-    let vertexBuffer = ctx.createBuffer();
-
-    //Bind buffer to array buffer
-    ctx.bindBuffer(ctx.ARRAY_BUFFER, vertexBuffer);
-
-    //Pass in the vertex data
-    ctx.bufferData(ctx.ARRAY_BUFFER, new Float32Array(frameBufferModel.vertexCoordinates), ctx.STATIC_DRAW);
-
-    //Create pointer to a new buffer
-    let elementIndicesBuffer = ctx.createBuffer();
-
-    //Bind the buffer to element buffer
-    ctx.bindBuffer(ctx.ELEMENT_ARRAY_BUFFER, elementIndicesBuffer);
-
-    //Pass in element index data
-    ctx.bufferData(ctx.ELEMENT_ARRAY_BUFFER, new Uint16Array(frameBufferModel.elementIndices), ctx.STATIC_DRAW);
-
-    frameBufferModel.buffers = {
-
-        vertex: vertexBuffer,
-        elementIndices: elementIndicesBuffer,
-    };
 }
 
 /**
@@ -1470,16 +1414,16 @@ function renderNewSkybox()
             // No rotation
             break;
         case 1:
-            panelToRender = skyBoxModels.pxPlane;
-            mat4.rotate(skyBoxRotationMatrix, skyBoxRotationMatrix, piOver2 * -1.0, YAXIS);
+            panelToRender = skyBoxModels.nxPlane;
+            mat4.rotate(skyBoxRotationMatrix, skyBoxRotationMatrix, piOver2, YAXIS);
             break;
         case 2:
             panelToRender = skyBoxModels.pzPlane;
             mat4.rotate(skyBoxRotationMatrix, skyBoxRotationMatrix, Math.PI, YAXIS);
             break;
         case 3:
-            panelToRender = skyBoxModels.nxPlane;
-            mat4.rotate(skyBoxRotationMatrix, skyBoxRotationMatrix, piOver2, YAXIS);
+            panelToRender = skyBoxModels.pxPlane;
+            mat4.rotate(skyBoxRotationMatrix, skyBoxRotationMatrix, piOver2 * -1.0, YAXIS);
             break;
         case 4:
             panelToRender = skyBoxModels.pyPlane;
@@ -1586,15 +1530,15 @@ function renderPanelTexture(xIndex, yIndex, panel)
     
 
     // Instruct WebGL how to pull out vertices
-    ctx.bindBuffer(ctx.ARRAY_BUFFER, frameBufferModel.buffers.vertex);
+    ctx.bindBuffer(ctx.ARRAY_BUFFER, skyBoxModels.nzPlane.buffers.vertex);
     ctx.vertexAttribPointer(cloudShader.attributes.viewportVertexPosition, 3, ctx.FLOAT, false, 0, 0);
     ctx.enableVertexAttribArray(cloudShader.attributes.viewportVertexPosition);
 
     // Give WebGL the element array
-    ctx.bindBuffer(ctx.ELEMENT_ARRAY_BUFFER, frameBufferModel.buffers.elementIndices);
+    ctx.bindBuffer(ctx.ELEMENT_ARRAY_BUFFER, skyBoxModels.nzPlane.buffers.elementIndices);
 
     // Draw triangles
-    ctx.drawElements(ctx.TRIANGLES, frameBufferModel.elementCount, ctx.UNSIGNED_SHORT, 0);
+    ctx.drawElements(ctx.TRIANGLES, skyBoxModels.nzPlane.elementCount, ctx.UNSIGNED_SHORT, 0);
 }
 
 /**
