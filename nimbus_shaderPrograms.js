@@ -164,7 +164,7 @@ let shipExteriorShader = {
             highp vec3 ambientLight = vec3(0.3, 0.3, 0.3); //Set ambientLight to 0.3 rgb
             highp vec3 directionalLightColor = vec3(256.0 / 256.0, 256.0 / 256.0, 256.0 / 256.0); //Set directional light color to white
 
-            highp vec3 lightDirection = normalize(vec3(0.2, 0.0, 1.0)); //Set light direction vector
+            highp vec3 lightDirection = normalize(vec3(0.0, -1.0, 1.0)); //Set light direction vector
 
             highp vec4 transformedNormal = u_normalMatrix * vec4(a_vertexNormal, 1.0); //Compute new normals based on object
 
